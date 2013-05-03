@@ -4,7 +4,7 @@
 #include<stdlib.h>
 
 struct monomial {
-	int unknowns;
+	int degree;
 	int *exponents;
 	int coefficient;
 };
@@ -23,14 +23,14 @@ void print_monomial(monomial *);
 /* ================================================================================
 	function definitions for monomials
 ================================================================================ */
-monomial *create_monomial(int unknowns) {
+monomial *create_monomial(int degree) {
 	int i;
 	monomial *m = (monomial*)malloc(sizeof(monomial));
-	m->unknowns = unknowns;
+	m->degree = degree;
 	m->coefficient = 1;
-	if (unknowns > 0) {
-		m->exponents = (int*)calloc(m->unknowns,sizeof(int));	
-		for (i = 0; i < m->unknowns; i++){
+	if (degree > 0) {
+		m->exponents = (int*)calloc(m->degree,sizeof(int));	
+		for (i = 0; i < m->degree; i++){
 			m->exponents[i] = 0;
 		}
 	} else {
@@ -43,13 +43,13 @@ monomial *create_monomial(int unknowns) {
 monomial *get_reduced_monomial(monomial *m) {
 	int i;	
 	monomial *reduced = (monomial*)malloc(sizeof(monomial));
-	reduced->unknowns = m->unknowns;
+	reduced->degree = m->degree;
 	reduced->coefficient = m->coefficient;
 
-	if (reduced->unknowns > 0) {
-		reduced->exponents = (int *)calloc(reduced->unknowns,sizeof(int));
+	if (reduced->degree > 0) {
+		reduced->exponents = (int *)calloc(reduced->degree,sizeof(int));
 		
-		for (i = 0; i < reduced->unknowns; i++) {
+		for (i = 0; i < reduced->degree; i++) {
 			reduced->exponents[i] = m->exponents[i];
 		}
 
@@ -68,13 +68,13 @@ void destroy_monomial(monomial *m) {
 
 int compare_monomial(monomial *m1, monomial *m2) {
 	int i;
-	if (m1->unknowns != m2->unknowns) {
-		if (m1->unknowns < m2->unknowns) {
+	if (m1->degree != m2->degree) {
+		if (m1->degree < m2->degree) {
 			return -1;
 		}
 		return 1;
 	}
-	else if (m1->unknowns == 0){
+	else if (m1->degree == 0){
 		if (m1->coefficient < m2->coefficient) {
 			return -1;
 		} else if (m1->coefficient > m2->coefficient) {
@@ -82,7 +82,7 @@ int compare_monomial(monomial *m1, monomial *m2) {
 		}
 		return 0;
 	} else {
-		for (i = 0; i < m1->unknowns; i++) {
+		for (i = 0; i < m1->degree; i++) {
 			if (m1->exponents[i] < m2->exponents[i]) {
 				return -1;
 			} else if (m1->exponents[i] > m2->exponents[i]) {
@@ -102,8 +102,8 @@ int compare_monomial(monomial *m1, monomial *m2) {
 void print_monomial(monomial *mn) {
 	int i;
     printf("monomial: ");
-    printf("%d\t",mn->unknowns);
-	for (i = 0; i < mn->unknowns; i++) {
+    printf("%d\t",mn->degree);
+	for (i = 0; i < mn->degree; i++) {
 		printf("%d",mn->exponents[i] & 1);
 	}
 	printf("\n");

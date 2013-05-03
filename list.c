@@ -24,6 +24,7 @@ void *remove_first(list *);
 void destroy_list(list *);
 void insert_left(list *, node *ref,void *);
 void delete_node(list *,node *);
+void merge_lists(list *, list *);
 
 /* ================================================================================
 	function definitions for lists
@@ -127,7 +128,6 @@ void destroy_list(list *l) {
 		temp = temp->next;
 		destroy_node(i);
 		i = temp;
-		i->previous = NULL;
 		l->length--;
 	}
 	free(l);
@@ -151,6 +151,23 @@ void delete_node(list *l, node *n) {
 	}
 	destroy_node(n);
 	l->length--;
+}
+
+void merge_lists(list *l1, list *l2) {
+	if (is_empty_list(l1)) {
+		l1->head = l2->head;
+		l1->tail = l2->tail;
+		l1->length = l2->length;
+	} else if (!is_empty_list(l2)) {
+		l1->tail->next = l2->head;
+		l2->head->previous = l1->tail;
+		l1->tail = l2->tail;
+		l1->length = l1->length + l2->length;
+	}
+	l2->head = NULL;
+	l2->tail = NULL;
+	l2->length = 0;
+	destroy_list(l2);
 }
 
 

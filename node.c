@@ -52,7 +52,4 @@ void set_value(node *n, void *value) {
 	n->value = value;
 }
 
-
-
-
 #endif

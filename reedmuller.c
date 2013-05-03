@@ -6,21 +6,24 @@
 #include"monomial.c"
 #include"list.c"
 
-struct gmonomial {
+struct generating_monomial {
 	int last_position;
 	int num_bits;
 	monomial *mon;
 };
 
-typedef struct gmonomial gmonomial;
+typedef struct generating_monomial generating_monomial;
 
 /* ================================================================================
 	function prototypes for reed-muller functions
 ================================================================================ */
 vector *psi_monomial(int, monomial *);
 vector *psi_x(int,int);
-matrix *create_generator_matrix(int,int);
+list *create_gmonomials(generating_monomial *, int, int);
+list *generate_reduced_monomials(int, int);
+matrix *create_generator_matrix(int, list *);
 
+vector *encode(vector*,int,int);
 /* ================================================================================
 	function definitions for reed-muller functions
 ================================================================================ */
@@ -36,7 +39,7 @@ vector *psi_monomial(int m, monomial *mn) {
         v->values[i] = 1;
     }
     
-	for (i = 0; i < mn->unknowns; i++) {
+	for (i = 0; i < mn->degree; i++) {
 		if (mn->exponents[i] > 0) {
 			constant = 0;
 			break;
@@ -48,7 +51,7 @@ vector *psi_monomial(int m, monomial *mn) {
 			v->values[i] = mn->coefficient;
 		}
 	} else if (mn->coefficient > 0) {
-		for (i = 0; i < mn->unknowns; i++) {
+		for (i = 0; i < mn->degree; i++) {
 			if (mn->exponents[i] > 0) {
 				mul1 = v;
 				mul2 = psi_x(m,i);
@@ -77,70 +80,122 @@ vector *psi_x(int m, int pos) {
 	return v;	
 }
 
-matrix *create_generator_matrix(int r,int m) {
+list *create_gmonomials(generating_monomial *ref, int r,  int m) {
 	int i,j;
-    matrix *generator_matrix;
-    gmonomial *ngm;
-    gmonomial *gm;
-    list *gmonomials;
-    list *vectors;
-    vector *row;
-    
-	gmonomials = create_list();
-	vectors = create_list();
-    
-	gm = (gmonomial*)malloc(sizeof(gmonomial));
+	list *gmonomial_group;
+	generating_monomial *gm;
+	generating_monomial *ngm;
+	
+	gm = ref;
+	gmonomial_group = create_list();
+	if (gm->num_bits < r) {
+		for (i = gm->last_position + 1; i < gm->mon->degree; i++) {
+			ngm = (generating_monomial *)malloc(sizeof(generating_monomial));
+			ngm->num_bits = gm->num_bits + 1;
+			ngm->mon = create_monomial(m);
+			ngm->mon->coefficient = 1;
+			
+			for (j = 0; j <= gm->last_position; j++) {
+				ngm->mon->exponents[j] = gm->mon->exponents[j];
+			}
+			
+			ngm->last_position = i;
+			ngm->mon->exponents[i] = 1;
+			append(gmonomial_group,ngm);
+		}
+	}
+	
+	return gmonomial_group;
+}
 
+list *generate_reduced_monomials(int r,int m) {
+	list *reduced_monomials;
+    list *gmonomials;
+	list *gmonomial_group;
+    
+	generating_monomial *gm;
+	
+	gmonomials = create_list();
+	reduced_monomials = create_list();
+    
+	gm = (generating_monomial*)malloc(sizeof(generating_monomial));
+	
 	gm->last_position = -1;
 	gm->num_bits = 0;
 	gm->mon = create_monomial(m);
 	
 	append(gmonomials, gm);
-
+	
 	while (!is_empty_list(gmonomials)) {
         
-		gm = (gmonomial*)remove_first(gmonomials);
+		gm = (generating_monomial*)remove_first(gmonomials);
 		
-        print_monomial(gm->mon);
-        append(vectors, psi_monomial(m,gm->mon));
-		if (gm->num_bits < r) {
-			for (i = gm->last_position + 1; i < gm->mon->unknowns; i++) {
-				ngm = (gmonomial *)malloc(sizeof(gmonomial));
-				ngm->num_bits = gm->num_bits + 1;
-				ngm->mon = create_monomial(m);
-				ngm->mon->coefficient = 1;
+		gmonomial_group = create_gmonomials(gm,r,m);
+		merge_lists(gmonomials,gmonomial_group);
+		
+		append(reduced_monomials,gm->mon);
+		
+		free(gm);
+	}    
+    
+    return reduced_monomials;
+}
+
+matrix *create_generator_matrix(int m, list *monomials) {
+	int i,j;
+	list *vectors;
+	node *mnode;
+	monomial *mon;
+	matrix *generator_matrix;
+	vector *row;
 	
-				for (j = 0; j <= gm->last_position; j++) {
-					ngm->mon->exponents[j] = gm->mon->exponents[j];
-				}
+	vectors = create_list();
+	mnode = monomials->head;
 
-				ngm->last_position = i;
-				ngm->mon->exponents[i] = 1;
-
-				append(gmonomials,ngm);
-
-			}
+	while (mnode != NULL) {
+		mon = (monomial*)get_value(mnode);
+		mnode = mnode->next;
+		append(vectors, psi_monomial(m,mon));
+	}
+	
+	generator_matrix = create_matrix(vectors->length, 1 << m);
+			   
+	for (i = 0; !is_empty_list(vectors); i++) {
+		row = (vector *)remove_first(vectors);
+		
+		for (j = 0; j < generator_matrix->num_columns; j++) {
+			set_matrix_value(generator_matrix, row->values[j], i, j);
 		}
 
-		destroy_monomial(gm->mon);
-		free(gm);
-
+		destroy_vector(row);
 	}
-    
-    generator_matrix = create_matrix(vectors->length, 1 << m);
-    
-    for (i = 0; !is_empty_list(vectors); i++) {
-        row = (vector *)remove_first(vectors);
-        
-        for (j = 0; j < generator_matrix->num_columns; j++) {
-            set_matrix_value(generator_matrix, row->values[j], i, j);
-        }
-
-        destroy_vector(row);
-    }
-    
-    
-    return generator_matrix;
+	return generator_matrix;
 }
+			   
+vector *encode(vector* v,int r,int m) {
+	/*
+	 input: 01101001010,2,4
+	 output: 1010111111111010
+	 */
+	
+	vector *result;
+	node *rmnode;
+	list *reduced_monomials = generate_reduced_monomials(r,m);
+	matrix *generator_matrix = create_generator_matrix(m,reduced_monomials);
+
+	result = lmultiply_vector(v, generator_matrix);
+
+	rmnode = reduced_monomials->head;
+	while (rmnode != NULL) {
+		destroy_monomial((monomial*)get_value(rmnode));
+		rmnode = rmnode->next;
+	}
+	
+	destroy_list(reduced_monomials);
+	destroy_matrix(generator_matrix);
+	return result;
+}
+
+
 
 #endif
