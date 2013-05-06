@@ -101,7 +101,7 @@ void *pop(list *l) {
 void *remove_first(list *l) {
 	void *result;
 	node *temp;
-
+    
 	if (is_empty_list(l)) {
 		printf("Memory underflow!");
 		exit(1);
@@ -124,6 +124,7 @@ void *remove_first(list *l) {
 void destroy_list(list *l) {
 	node *temp = l->head;
 	node *i = temp;
+
 	while (temp != NULL) {
 		temp = temp->next;
 		destroy_node(i);

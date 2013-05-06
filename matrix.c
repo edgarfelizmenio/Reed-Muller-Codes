@@ -21,6 +21,7 @@ void destroy_matrix(matrix *);
 void set_matrix_value(matrix *, int, int, int);
 vector *lmultiply_vector(vector *, matrix *);
 void print_matrix(matrix *);
+
 /* ================================================================================
 	function definitions for matrices
 ================================================================================ */
@@ -42,13 +43,19 @@ matrix *create_matrix(int num_rows, int num_columns) {
 
 void destroy_matrix(matrix *m) {
 	int i;
-	for (i = 0; i < m->num_rows; i++) {
-		free(m->values[i]);
-		m->values[i] = NULL;
-	}
-	free(m->values);
-	m->values = NULL;
-	free(m);
+    if (m != NULL) {
+        if (m->values != NULL) {
+            for (i = 0; i < m->num_rows; i++) {
+                free(m->values[i]);
+                m->values[i] = NULL;
+            }
+            free(m->values);
+            m->values = NULL;
+        }
+        m->num_rows = 0;
+        m->num_columns = 0;
+        free(m);
+    }
 	m = NULL;
 }
 
@@ -61,6 +68,7 @@ void set_matrix_value(matrix *m, int value, int row, int column) {
 vector *lmultiply_vector(vector *v, matrix *m) {
 	vector *result = NULL;
 	int i,j,sum;
+
 	if (v->length == m->num_rows) {
 		result = create_vector(m->num_columns);
 		for (i = 0; i < m->num_columns; i++) {
@@ -71,21 +79,23 @@ vector *lmultiply_vector(vector *v, matrix *m) {
 			result->values[i] = sum % DEGREE;
 		}
 	}
+ 
 	return result;
 }
 
 void print_matrix(matrix *m) {
 	int i,j;
+    if (m == NULL) {
+        printf("null\n");
+    } else {
+        for (i = 0; i < m->num_rows; i++) {
+            for (j = 0; j < m->num_columns; j++) {
+                printf("%d ", m->values[i][j]);
+            }
+            printf("\n");
+        }
+        printf("\n");
+    }
 
-	printf("\n");
-	for (i = 0; i < m->num_rows; i++) {
-		for (j = 0; j < m->num_columns; j++) {
-			printf("%d ", m->values[i][j]);
-		}
-		printf("\n");
-	}
-	printf("\n");
 }
-
-
 #endif

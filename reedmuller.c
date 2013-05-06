@@ -22,6 +22,8 @@ vector *psi_x(int,int);
 list *create_gmonomials(generating_monomial *, int, int);
 list *generate_reduced_monomials(int, int);
 matrix *create_generator_matrix(int, list *);
+list *generate_characteristic_vectors(monomial *, int);
+int majority_logic(vector *, monomial *, int);
 
 vector *encode(vector*,int,int);
 vector *decode(vector*,int,int);
@@ -190,18 +192,66 @@ matrix *create_generator_matrix(int m, list *monomials) {
 	}
 	return generator_matrix;
 }
-			   
-vector *encode(vector* v,int r,int m) {
-	/*
-	 input: 01101001010,2,4
-	 output: 1010111111111010
-	 */
-	
+
+list *generate_characteristic_vectors(monomial *mon, int m) {
+    int i,j,length;
+    list *characteristic_vectors = create_list();
+    vector *characteristic_vector = create_vector(1<<m);
+    vector *psi;
+    vector *psi_inv;
+    
+    for (i = 0; i < characteristic_vector->length; i++) {
+        characteristic_vector->values[i] = 1;
+    }
+    
+    append(characteristic_vectors, characteristic_vector);
+    
+    for (i = 0; i < mon->degree; i++) {
+        if (mon->exponents[i] == 0) {
+            psi = psi_x(m,i);
+            psi_inv = complement_vector(psi);
+            
+            j = characteristic_vectors->length;
+
+            
+            for (; j > 0; j--) {
+                characteristic_vector = remove_first(characteristic_vectors);
+
+                append(characteristic_vectors, multiply_vectors(characteristic_vector,psi));
+                append(characteristic_vectors, multiply_vectors(characteristic_vector,psi_inv));
+
+                destroy_vector(characteristic_vector);
+            }
+            
+            destroy_vector(psi);
+            destroy_vector(psi_inv);
+        }
+    }
+    return characteristic_vectors;
+}
+
+int majority_logic(vector *v, monomial * mon, int m) {
+    int count_1 = 0;
+    int num_vectors;
+    vector *characteristic_vector;
+    list *characteristic_vectors = generate_characteristic_vectors(mon, m);
+    num_vectors = characteristic_vectors->length;
+    
+    while (!is_empty_list(characteristic_vectors)) {
+        characteristic_vector = remove_first(characteristic_vectors);
+        count_1 += dot_product(v,characteristic_vector);
+        destroy_vector(characteristic_vector);
+    }
+    destroy_list(characteristic_vectors);
+    return count_1 >= (num_vectors / 2)? 1:0;
+}
+
+vector *encode(vector* v,int r,int m) {	
 	vector *result;
 	node *rmnode;
 	list *reduced_monomials = generate_reduced_monomials(r,m);
 	matrix *generator_matrix = create_generator_matrix(m,reduced_monomials);
-
+    
 	result = lmultiply_vector(v, generator_matrix);
 
 	rmnode = reduced_monomials->head;
@@ -216,25 +266,55 @@ vector *encode(vector* v,int r,int m) {
 }
 
 vector *decode(vector* v, int r, int m) {
-	monomial *mon;
-	list *monomial_group;
-	list *reduced_monomials = generate_reduced_monomials(r,m);
-	list *monomial_groups = group_reduced_monomials(reduced_monomials,r,m);
-	
-	while (!is_empty_list(monomial_groups)) {
-		monomial_group = (list *)remove_first(monomial_groups);
-		while (!is_empty_list(monomial_group)) {
-			mon = (monomial *)remove_first(monomial_group);
-			print_monomial(mon);
-			destroy_monomial(mon);
-		}
-		printf("\n");
-		destroy_list(monomial_group);
-	}
-	destroy_list(monomial_groups);
-	
-	
-	return NULL;
+    int i,j, count;
+     
+    list *reduced_monomials = generate_reduced_monomials(r,m);
+    vector *result = create_vector(reduced_monomials->length);
+    monomial *mon = (monomial *)remove_first(reduced_monomials);
+    
+    vector *majority = create_vector(reduced_monomials->length), *s, *temp;
+    matrix *generator_matrix = create_generator_matrix(m, reduced_monomials);
+
+    destroy_monomial(mon);
+    
+    i = 0;
+    while (!is_empty_list(reduced_monomials)) {
+        mon = (monomial *)remove_first(reduced_monomials);
+        
+        majority->values[i] = majority_logic(v,mon,m);
+        
+        i++;
+        
+        destroy_monomial(mon);
+    }
+    
+    i = majority->length - 1;
+    j = result->length - 1;
+    while (i >= 0) {
+        result->values[j] = majority->values[i];
+        i--;
+        j--;
+    }
+
+    s = lmultiply_vector(majority, generator_matrix);
+    
+    temp = s;
+    s = add_vectors(s,v);
+    for(i = 0, count = 0; i < s->length; i++) {
+        if (s->values[i] == 1) {
+            count++;
+        }
+    }
+    if (count >= s->length / 2) {
+        result->values[0] = 1;
+    }
+    
+    destroy_vector(temp);
+    destroy_vector(s);
+    destroy_vector(majority);
+    destroy_matrix(generator_matrix);
+    destroy_list(reduced_monomials);
+    return result;
 }
 
 

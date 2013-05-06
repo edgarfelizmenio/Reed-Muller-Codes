@@ -63,7 +63,6 @@ void destroy_monomial(monomial *m) {
 	free(m->exponents);
     m->exponents = NULL;
 	free(m);
-    m = NULL;
 }
 
 int compare_monomial(monomial *m1, monomial *m2) {

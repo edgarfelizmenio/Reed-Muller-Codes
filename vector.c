@@ -18,8 +18,9 @@ typedef struct vector vector;
 vector *create_vector(int);
 vector *scalar_add(vector *, int);
 vector *add(vector *,vector *);
-vector *complement(vector *);
+vector *complement_vector(vector *);
 vector *multiply(vector *, vector *);
+int dot_product(vector *,vector *);
 void destroy_vector(vector *);
 void print_vector(vector*);
 
@@ -69,7 +70,14 @@ vector *multiply_vectors(vector *v1, vector *v2) {
 
 vector *add_vectors(vector *v1, vector *v2) {
 	int i;
-	vector *s = create_vector(v1->length);
+	vector *s;
+    
+    if (v1->length != v2->length) {
+        printf("vector length mismatch!!!\n");
+        exit(1);
+    }
+    
+    s = create_vector(v1->length);
 
 	for (i = 0; i < v1->length; i++) {
 		s->values[i] = (v1->values[i] + v2->values[i]) % DEGREE;
@@ -78,17 +86,30 @@ vector *add_vectors(vector *v1, vector *v2) {
 	return s;
 }
 
+int dot_product(vector *v1, vector *v2) {
+    int i;
+    int sum = 0;
+    for (i = 0; i < v1->length; i++) {
+        sum += (v1->values[i] * v2->values[i]);
+    }
+    return sum % DEGREE;
+}
+
 void print_vector(vector *v) {
 	int i;
+    printf("length: %d\t",v->length);
 	for (i = 0; i < v->length; i++) {
 		printf("%d",v->values[i] & 1);
 	}
-	printf("\n");
+    printf("\n");
 }
 
 void destroy_vector(vector *v) {
-	free(v->values);
-	free(v);
-	v = NULL;
+    if (v != NULL) {
+        free(v->values);
+        free(v);
+        v = NULL;
+    }
 }
+
 #endif
