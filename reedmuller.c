@@ -102,9 +102,7 @@ list *generate_reduced_monomials(int r,int m) {
 	append(gmonomials, gm);
 	
 	while (!is_empty_list(gmonomials)) {
-        
 		gm = (generating_monomial*)remove_first(gmonomials);
-		
 		gmonomial_group = create_gmonomials(gm,r,m);
 		merge_lists(gmonomials,gmonomial_group);
 		
@@ -243,11 +241,11 @@ int majority_logic(vector *v, monomial * mon, int m) {
         destroy_vector(characteristic_vector);
     }
     destroy_list(characteristic_vectors);
-    return count_1 >= (num_vectors / 2)? 1:0;
+    return count_1 * 2 >= num_vectors? 1:0;
 }
 
 vector *encode(vector* v,int r,int m) {	
-	vector *result;
+	vector *result, *errors;
 	node *rmnode;
 	list *reduced_monomials = generate_reduced_monomials(r,m);
 	matrix *generator_matrix = create_generator_matrix(m,reduced_monomials);
@@ -266,10 +264,10 @@ vector *encode(vector* v,int r,int m) {
 }
 
 vector *decode(vector* v, int r, int m) {
-    int i,j, count;
+    int i,j, count_1;
      
     list *reduced_monomials = generate_reduced_monomials(r,m);
-    vector *result = create_vector(reduced_monomials->length);
+    vector *result = create_vector(reduced_monomials->length), *top;
     monomial *mon = (monomial *)remove_first(reduced_monomials);
     
     vector *majority = create_vector(reduced_monomials->length), *s, *temp;
@@ -280,35 +278,58 @@ vector *decode(vector* v, int r, int m) {
     i = 0;
     while (!is_empty_list(reduced_monomials)) {
         mon = (monomial *)remove_first(reduced_monomials);
-        
         majority->values[i] = majority_logic(v,mon,m);
-        
         i++;
-        
         destroy_monomial(mon);
     }
     
-    i = majority->length - 1;
-    j = result->length - 1;
-    while (i >= 0) {
+	for (i = 0, j = 1; i < majority->length; i++,j++) {
         result->values[j] = majority->values[i];
-        i--;
-        j--;
-    }
+	}
 
     s = lmultiply_vector(majority, generator_matrix);
     
     temp = s;
     s = add_vectors(s,v);
-    for(i = 0, count = 0; i < s->length; i++) {
+	destroy_vector(temp);
+    	
+	for(i = 0, count_1 = 0; i < s->length; i++) {
         if (s->values[i] == 1) {
-            count++;
-        }
+            count_1++;
+        } 
     }
-    if (count >= s->length / 2) {
+	
+    if (count_1 * 2 >= s->length) {
         result->values[0] = 1;
-    }
-    
+    } else {
+		result->values[0] = 0;
+	}
+
+	top = create_vector(s->length);
+	for (i = 0; i < top->length; i++) {
+		top->values[i] = result->values[0];
+	}
+	
+
+	temp = s;
+	s = add_vectors(top,s);
+	
+	printf("received:\n");
+	print_vector(v);
+	printf("generated:\n");
+	print_vector(s);
+	
+	
+	
+	printf("error indices: ");
+	for (i = 0; i < s->length; i++) {
+		if (s->values[i] != v->values[i]) {
+			printf("%d\t",i);
+		}
+	}
+	printf("\n");
+
+	destroy_vector(top);
     destroy_vector(temp);
     destroy_vector(s);
     destroy_vector(majority);

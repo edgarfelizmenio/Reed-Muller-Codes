@@ -19,15 +19,9 @@ int main(void) {
     loop("00110011",3,3);
     loop("00110010",3,3);
     loop("1111111111111111",2,5);
-    
-    e = to_int_vector("1010111111111010",16);
-    d = decode(e,2,4);
-    printf("encoded:\n");
-    print_vector(e);
-    printf("decoded:\n");
-    print_vector(d);
-    destroy_vector(e);
+	loop("0010011111111111",2,5);
 
+    
     e = to_int_vector("1010111111111010",16);
     d = decode(e,2,4);
     printf("encoded:\n");
@@ -35,7 +29,17 @@ int main(void) {
     printf("decoded:\n");
     print_vector(d);
     destroy_vector(e);
-    
+    printf("\n\n");
+	
+    e = to_int_vector("1010111111111010",16);
+    d = decode(e,2,4);
+    printf("encoded:\n");
+    print_vector(e);
+    printf("decoded:\n");
+    print_vector(d);
+    destroy_vector(e);
+	printf("\n\n");
+	
     e = to_int_vector("01111110111010001110100010000001",32);
     d = decode(e,2,5);
     printf("encoded:\n");
@@ -43,9 +47,19 @@ int main(void) {
     printf("decoded:\n");
     print_vector(d);
     destroy_vector(e);
-    
+    printf("\n\n");
+	
     e = to_int_vector("01101110101010001110101010000001",32);
     d = decode(e,2,5);
+    printf("encoded:\n");
+    print_vector(e);
+    printf("decoded:\n");
+    print_vector(d);
+    destroy_vector(e);
+    printf("\n\n");
+
+	e = to_int_vector("10111100",8);
+    d = decode(e,1,3);
     printf("encoded:\n");
     print_vector(e);
     printf("decoded:\n");
@@ -68,5 +82,5 @@ void loop(char *s,int r,int m) {
     destroy_vector(e);
 	destroy_vector(v);
     destroy_vector(d);
-    printf("\n");
+    printf("\n\n");
 }
