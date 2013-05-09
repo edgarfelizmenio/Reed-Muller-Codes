@@ -90,7 +90,7 @@ int dot_product(vector *v1, vector *v2) {
     int i;
     int sum = 0;
     for (i = 0; i < v1->length; i++) {
-        sum += (v1->values[i] * v2->values[i]);
+        sum += (v1->values[i] * v2->values[i]) % DEGREE;
     }
     return sum % DEGREE;
 }

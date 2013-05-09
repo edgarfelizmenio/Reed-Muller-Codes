@@ -1,0 +1,226 @@
+Me:
+length: 8	00110110
+My:
+length: 8	01101100
+Me + My:
+length: 8	01011010
+original:
+length: 7	0111010
+encoded:
+length: 8	00110110
+decoded:
+length: 7	0010010
+
+
+Me:
+length: 16	1010111111111010
+My:
+length: 16	1111010101011111
+Me + My:
+length: 16	0101101010100101
+original:
+length: 11	01101001010
+encoded:
+length: 16	1010111111111010
+decoded:
+length: 11	10000001010
+
+
+Me:
+length: 8	00111100
+My:
+length: 8	00111100
+Me + My:
+length: 8	00000000
+original:
+length: 4	0110
+encoded:
+length: 8	00111100
+decoded:
+length: 4	0110
+
+
+Me:
+length: 16	0000000000000000
+My:
+length: 16	0000000000000000
+Me + My:
+length: 16	0000000000000000
+original:
+length: 11	00000000000
+encoded:
+length: 16	0000000000000000
+decoded:
+length: 11	00000000000
+
+
+Me:
+length: 16	1110100010000001
+My:
+length: 16	0111111011101000
+Me + My:
+length: 16	1001011001101001
+original:
+length: 11	11111111111
+encoded:
+length: 16	1110100010000001
+decoded:
+length: 11	00000111111
+
+
+Me:
+length: 8	00000000
+My:
+length: 8	00000000
+Me + My:
+length: 8	00000000
+original:
+length: 1	0
+encoded:
+length: 8	00000000
+decoded:
+length: 1	0
+
+
+Me:
+length: 8	11111111
+My:
+length: 8	11111111
+Me + My:
+length: 8	00000000
+original:
+length: 1	1
+encoded:
+length: 8	11111111
+decoded:
+length: 1	1
+
+
+Me:
+length: 8	01101110
+My:
+length: 8	10011001
+Me + My:
+length: 8	11110111
+original:
+length: 8	00110011
+encoded:
+length: 8	01101110
+decoded:
+length: 8	10110000
+
+
+Me:
+length: 8	00001110
+My:
+length: 8	11110000
+Me + My:
+length: 8	11111110
+original:
+length: 8	00111111
+encoded:
+length: 8	00001110
+decoded:
+length: 8	01000000
+
+
+Me:
+length: 8	11101110
+My:
+length: 8	01110111
+Me + My:
+length: 8	10011001
+original:
+length: 8	00110010
+encoded:
+length: 8	11101110
+decoded:
+length: 8	10000010
+
+
+Me:
+length: 32	01111110111010001110100010000001
+My:
+length: 32	00010111011111100111111011101000
+Me + My:
+length: 32	01101001100101101001011001101001
+original:
+length: 16	1111111111111111
+encoded:
+length: 32	01111110111010001110100010000001
+decoded:
+length: 16	0000001111111111
+
+
+Me:
+length: 32	01000010110101000010101101000010
+My:
+length: 32	00010111011111100111111011101000
+Me + My:
+length: 32	01010101101010100101010110101010
+original:
+length: 16	0010011111111111
+encoded:
+length: 32	01000010110101000010101101000010
+decoded:
+length: 16	0000001111111111
+
+
+Me:
+length: 16	1010111111111010
+My:
+length: 16	1111010101011111
+Me + My:
+length: 16	0101101010100101
+encoded:
+length: 16	1010111111111010
+decoded:
+length: 11	10000001010
+
+
+Me:
+length: 16	1010111111111010
+My:
+length: 16	1111010101011111
+Me + My:
+length: 16	0101101010100101
+encoded:
+length: 16	1010111111111010
+decoded:
+length: 11	10000001010
+
+
+Me:
+length: 32	01111110111010001110100010000001
+My:
+length: 32	00010111011111100111111011101000
+Me + My:
+length: 32	01101001100101101001011001101001
+encoded:
+length: 32	01111110111010001110100010000001
+decoded:
+length: 16	0000001111111111
+
+
+Me:
+length: 32	01101110101010001110101010000001
+My:
+length: 32	01000010110101000010101101000010
+Me + My:
+length: 32	00101100011111001100000111000011
+encoded:
+length: 32	01101110101010001110101010000001
+decoded:
+length: 16	0010011111111111
+
+
+Me:
+length: 8	10111100
+My:
+length: 8	11000011
+Me + My:
+length: 8	01111111
+encoded:
+length: 8	10111100
+decoded:
+length: 4	1110

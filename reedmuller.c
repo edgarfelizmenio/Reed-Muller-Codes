@@ -27,6 +27,7 @@ int majority_logic(vector *, monomial *, int);
 
 vector *encode(vector*,int,int);
 vector *decode(vector*,int,int);
+vector *decode2(vector*,int,int);
 /* ================================================================================
 	function definitions for reed-muller functions
 ================================================================================ */
@@ -192,37 +193,37 @@ matrix *create_generator_matrix(int m, list *monomials) {
 }
 
 list *generate_characteristic_vectors(monomial *mon, int m) {
-    int i,j,length;
+    int i;
     list *characteristic_vectors = create_list();
-    vector *characteristic_vector = create_vector(1<<m);
-    vector *psi;
+    list *characteristic_vectors_temp;
+	vector *characteristic_vector;
+    
+	vector *psi;
     vector *psi_inv;
-    
-    for (i = 0; i < characteristic_vector->length; i++) {
-        characteristic_vector->values[i] = 1;
-    }
-    
-    append(characteristic_vectors, characteristic_vector);
-    
+	
     for (i = 0; i < mon->degree; i++) {
         if (mon->exponents[i] == 0) {
             psi = psi_x(m,i);
             psi_inv = complement_vector(psi);
-            
-            j = characteristic_vectors->length;
+            characteristic_vectors_temp = create_list();
+			
+			if (is_empty_list(characteristic_vectors)) {
+				append(characteristic_vectors_temp, psi);
+				append(characteristic_vectors_temp, psi_inv);
+			} else {
+				while (!is_empty_list(characteristic_vectors)) {
+					characteristic_vector = remove_first(characteristic_vectors);
+					append(characteristic_vectors_temp, multiply_vectors(characteristic_vector,psi));
+					append(characteristic_vectors_temp, multiply_vectors(characteristic_vector,psi_inv));
+					destroy_vector(characteristic_vector);
+				}
+				destroy_vector(psi);
+				destroy_vector(psi_inv);
+			}
 
-            
-            for (; j > 0; j--) {
-                characteristic_vector = remove_first(characteristic_vectors);
-
-                append(characteristic_vectors, multiply_vectors(characteristic_vector,psi));
-                append(characteristic_vectors, multiply_vectors(characteristic_vector,psi_inv));
-
-                destroy_vector(characteristic_vector);
-            }
-            
-            destroy_vector(psi);
-            destroy_vector(psi_inv);
+            destroy_list(characteristic_vectors);
+			characteristic_vectors = characteristic_vectors_temp;
+			characteristic_vectors_temp = NULL;
         }
     }
     return characteristic_vectors;
@@ -235,13 +236,18 @@ int majority_logic(vector *v, monomial * mon, int m) {
     list *characteristic_vectors = generate_characteristic_vectors(mon, m);
     num_vectors = characteristic_vectors->length;
     
+	if (is_empty_list(characteristic_vectors)) {
+		return 0;
+	}
+	
     while (!is_empty_list(characteristic_vectors)) {
         characteristic_vector = remove_first(characteristic_vectors);
         count_1 += dot_product(v,characteristic_vector);
         destroy_vector(characteristic_vector);
     }
+	
     destroy_list(characteristic_vectors);
-    return count_1 * 2 >= num_vectors? 1:0;
+    return count_1 * 2 > num_vectors? 1:0;
 }
 
 vector *encode(vector* v,int r,int m) {	
@@ -288,49 +294,54 @@ vector *decode(vector* v, int r, int m) {
 	}
 
     s = lmultiply_vector(majority, generator_matrix);
-    
-    temp = s;
-    s = add_vectors(s,v);
-	destroy_vector(temp);
-    	
-	for(i = 0, count_1 = 0; i < s->length; i++) {
-        if (s->values[i] == 1) {
+	
+	printf("Me:\n");
+	print_vector(v);
+	printf("My:\n");
+	print_vector(s);
+	
+    temp = add_vectors(s,v);
+
+	printf("Me + My:\n");
+	print_vector(temp);
+	
+	for(i = 0, count_1 = 0; i < temp->length; i++) {
+        if (temp->values[i] == 1) {
             count_1++;
         } 
     }
 	
-    if (count_1 * 2 >= s->length) {
+    if (count_1 * 2 > temp->length) {
         result->values[0] = 1;
     } else {
 		result->values[0] = 0;
 	}
+	
+	destroy_vector(temp);
 
 	top = create_vector(s->length);
 	for (i = 0; i < top->length; i++) {
 		top->values[i] = result->values[0];
 	}
-	
 
 	temp = s;
 	s = add_vectors(top,s);
+	destroy_vector(temp);
 	
-	printf("received:\n");
-	print_vector(v);
-	printf("generated:\n");
+	printf("Mo:\n");
 	print_vector(s);
 	
-	
-	
-	printf("error indices: ");
-	for (i = 0; i < s->length; i++) {
-		if (s->values[i] != v->values[i]) {
+	printf("error indices:\n");
+	temp = add_vectors(s,v);
+	for (i = 0; i < temp->length; i++) {
+		if (temp->values[i] != 0) {
 			printf("%d\t",i);
 		}
 	}
 	printf("\n");
 
+	destroy_vector(temp);
 	destroy_vector(top);
-    destroy_vector(temp);
     destroy_vector(s);
     destroy_vector(majority);
     destroy_matrix(generator_matrix);
@@ -338,5 +349,39 @@ vector *decode(vector* v, int r, int m) {
     return result;
 }
 
+vector *decode2(vector* v, int r, int m) {
+    int i,j, count_1;
+	
+    list *reduced_monomials = generate_reduced_monomials(r,m);
+    vector *result = create_vector(reduced_monomials->length), *s, *temp;
+    matrix *generator_matrix = create_generator_matrix(m, reduced_monomials);
+	monomial *mon;
+	
+    i = result->length - 1;
+    while (!is_empty_list(reduced_monomials)) {
+        mon = (monomial *)pop(reduced_monomials);
+        result->values[i] = majority_logic(v,mon,m);
+        i--;
+        destroy_monomial(mon);
+    }
+	
+    s = lmultiply_vector(result, generator_matrix);
+	
+	printf("Me:\n");
+	print_vector(v);
+	printf("My:\n");
+	print_vector(s);
+	
+    temp = add_vectors(s,v);
+	
+	printf("Me + My:\n");
+	print_vector(temp);
+	
+	destroy_vector(temp);
+    destroy_vector(s);
+    destroy_matrix(generator_matrix);
+    destroy_list(reduced_monomials);
+    return result;
+}
 
 #endif

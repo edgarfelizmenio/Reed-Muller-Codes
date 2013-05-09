@@ -1,0 +1,294 @@
+Me:
+length: 8	00110110
+My:
+length: 8	01101100
+Me + My:
+length: 8	01011010
+Mo:
+length: 8	01101100
+error indices:
+1	3	4	6	
+original:
+length: 7	0111010
+encoded:
+length: 8	00110110
+decoded:
+length: 7	0010010
+
+
+Me:
+length: 16	1010111111111010
+My:
+length: 16	0000101010100000
+Me + My:
+length: 16	1010010101011010
+Mo:
+length: 16	0000101010100000
+error indices:
+0	2	5	7	9	11	12	14	
+original:
+length: 11	01101001010
+encoded:
+length: 16	1010111111111010
+decoded:
+length: 11	00000001010
+
+
+Me:
+length: 8	00111100
+My:
+length: 8	00111100
+Me + My:
+length: 8	00000000
+Mo:
+length: 8	00111100
+error indices:
+
+original:
+length: 4	0110
+encoded:
+length: 8	00111100
+decoded:
+length: 4	0110
+
+
+Me:
+length: 16	0000000000000000
+My:
+length: 16	0000000000000000
+Me + My:
+length: 16	0000000000000000
+Mo:
+length: 16	0000000000000000
+error indices:
+
+original:
+length: 11	00000000000
+encoded:
+length: 16	0000000000000000
+decoded:
+length: 11	00000000000
+
+
+Me:
+length: 16	1110100010000001
+My:
+length: 16	0111111011101000
+Me + My:
+length: 16	1001011001101001
+Mo:
+length: 16	0111111011101000
+error indices:
+0	3	5	6	9	10	12	15	
+original:
+length: 11	11111111111
+encoded:
+length: 16	1110100010000001
+decoded:
+length: 11	00000111111
+
+
+Me:
+length: 8	00000000
+My:
+length: 8	00000000
+Me + My:
+length: 8	00000000
+Mo:
+length: 8	00000000
+error indices:
+
+original:
+length: 1	0
+encoded:
+length: 8	00000000
+decoded:
+length: 1	0
+
+
+Me:
+length: 8	11111111
+My:
+length: 8	00000000
+Me + My:
+length: 8	11111111
+Mo:
+length: 8	11111111
+error indices:
+
+original:
+length: 1	1
+encoded:
+length: 8	11111111
+decoded:
+length: 1	1
+
+
+Me:
+length: 8	01101110
+My:
+length: 8	01100110
+Me + My:
+length: 8	00001000
+Mo:
+length: 8	01100110
+error indices:
+4	
+original:
+length: 8	00110011
+encoded:
+length: 8	01101110
+decoded:
+length: 8	00110000
+
+
+Me:
+length: 8	00001110
+My:
+length: 8	11110000
+Me + My:
+length: 8	11111110
+Mo:
+length: 8	00001111
+error indices:
+7	
+original:
+length: 8	00111111
+encoded:
+length: 8	00001110
+decoded:
+length: 8	11000000
+
+
+Me:
+length: 8	11101110
+My:
+length: 8	10001000
+Me + My:
+length: 8	01100110
+Mo:
+length: 8	10001000
+error indices:
+1	2	5	6	
+original:
+length: 8	00110010
+encoded:
+length: 8	11101110
+decoded:
+length: 8	00000010
+
+
+Me:
+length: 32	01111110111010001110100010000001
+My:
+length: 32	00010111011111100111111011101000
+Me + My:
+length: 32	01101001100101101001011001101001
+Mo:
+length: 32	00010111011111100111111011101000
+error indices:
+1	2	4	7	8	11	13	14	16	19	21	22	25	26	28	31	
+original:
+length: 16	1111111111111111
+encoded:
+length: 32	01111110111010001110100010000001
+decoded:
+length: 16	0000001111111111
+
+
+Me:
+length: 32	01000010110101000010101101000010
+My:
+length: 32	00010111011111100111111011101000
+Me + My:
+length: 32	01010101101010100101010110101010
+Mo:
+length: 32	00010111011111100111111011101000
+error indices:
+1	3	5	7	8	10	12	14	17	19	21	23	24	26	28	30	
+original:
+length: 16	0010011111111111
+encoded:
+length: 32	01000010110101000010101101000010
+decoded:
+length: 16	0000001111111111
+
+
+Me:
+length: 16	1010111111111010
+My:
+length: 16	0000101010100000
+Me + My:
+length: 16	1010010101011010
+Mo:
+length: 16	0000101010100000
+error indices:
+0	2	5	7	9	11	12	14	
+encoded:
+length: 16	1010111111111010
+decoded:
+length: 11	00000001010
+
+
+Me:
+length: 16	1010111111111010
+My:
+length: 16	0000101010100000
+Me + My:
+length: 16	1010010101011010
+Mo:
+length: 16	0000101010100000
+error indices:
+0	2	5	7	9	11	12	14	
+encoded:
+length: 16	1010111111111010
+decoded:
+length: 11	00000001010
+
+
+Me:
+length: 32	01111110111010001110100010000001
+My:
+length: 32	00010111011111100111111011101000
+Me + My:
+length: 32	01101001100101101001011001101001
+Mo:
+length: 32	00010111011111100111111011101000
+error indices:
+1	2	4	7	8	11	13	14	16	19	21	22	25	26	28	31	
+encoded:
+length: 32	01111110111010001110100010000001
+decoded:
+length: 16	0000001111111111
+
+
+Me:
+length: 32	01101110101010001110101010000001
+My:
+length: 32	01000010110101000010101101000010
+Me + My:
+length: 32	00101100011111001100000111000011
+Mo:
+length: 32	01000010110101000010101101000010
+error indices:
+2	4	5	9	10	11	12	13	16	17	23	24	25	30	31	
+encoded:
+length: 32	01101110101010001110101010000001
+decoded:
+length: 16	0010011111111111
+
+
+Me:
+length: 8	10111100
+My:
+length: 8	00111100
+Me + My:
+length: 8	10000000
+Mo:
+length: 8	00111100
+error indices:
+0	
+encoded:
+length: 8	10111100
+decoded:
+length: 4	0110

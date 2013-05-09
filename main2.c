@@ -24,7 +24,7 @@ int main(void) {
 
     
     e = to_int_vector("1010111111111010",16);
-    d = decode(e,2,4);
+    d = decode2(e,2,4);
     printf("encoded:\n");
     print_vector(e);
     printf("decoded:\n");
@@ -33,7 +33,7 @@ int main(void) {
     printf("\n\n");
 	
     e = to_int_vector("1010111111111010",16);
-    d = decode(e,2,4);
+    d = decode2(e,2,4);
     printf("encoded:\n");
     print_vector(e);
     printf("decoded:\n");
@@ -42,7 +42,7 @@ int main(void) {
 	printf("\n\n");
 	
     e = to_int_vector("01111110111010001110100010000001",32);
-    d = decode(e,2,5);
+    d = decode2(e,2,5);
     printf("encoded:\n");
     print_vector(e);
     printf("decoded:\n");
@@ -51,7 +51,7 @@ int main(void) {
     printf("\n\n");
 	
     e = to_int_vector("01101110101010001110101010000001",32);
-    d = decode(e,2,5);
+    d = decode2(e,2,5);
     printf("encoded:\n");
     print_vector(e);
     printf("decoded:\n");
@@ -60,7 +60,7 @@ int main(void) {
     printf("\n\n");
 
 	e = to_int_vector("10111100",8);
-    d = decode(e,1,3);
+    d = decode2(e,1,3);
     printf("encoded:\n");
     print_vector(e);
     printf("decoded:\n");
@@ -73,7 +73,7 @@ int main(void) {
 void loop(char *s,int r,int m) {
     vector *v = to_int_vector(s,strlen(s));
 	vector *e = encode(v,r,m);
-    vector *d = decode(e,r,m);
+    vector *d = decode2(e,r,m);
 	printf("original:\n");
     print_vector(v);
     printf("encoded:\n");
