@@ -254,11 +254,28 @@ int majority_logic(vector *v, monomial * mon, int m) {
 }
 
 vector *encode(vector* v,int r,int m) {	
-	vector *result, *errors;
+	int i;
+	vector *result, *errors, *param;
 	node *rmnode;
 	list *reduced_monomials = generate_reduced_monomials(r,m);
 	matrix *generator_matrix = create_generator_matrix(m,reduced_monomials);
     
+	if (generator_matrix->num_rows < v->length) {
+		printf("\nMATRIX TOO SMALL FOR MESSAGE\n");
+		exit(1);
+	}
+	
+	if (generator_matrix->num_rows > v->length) {
+		param = create_vector(generator_matrix->num_rows);
+		for (i = 0; i < v->length; i++) {
+			param->values[i] = v->values[i];
+		}
+		result = lmultiply_vector(param, generator_matrix);
+		destroy_vector(param);
+	} else {
+		result = lmultiply_vector(v, generator_matrix);	
+	}
+	
 	result = lmultiply_vector(v, generator_matrix);
 
 	rmnode = reduced_monomials->head;
