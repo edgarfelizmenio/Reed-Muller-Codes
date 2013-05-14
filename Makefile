@@ -10,5 +10,5 @@ main: main.c
 	$(CC) -o ./bin/main main.c
 	
 run:
-	@echo "running run"
+	@echo "running..."
 	./bin/main > ./bin/out.txt
