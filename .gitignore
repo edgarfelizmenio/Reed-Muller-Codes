@@ -1,1 +1,10 @@
 .DS_Store
+
+*.txt
+
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
