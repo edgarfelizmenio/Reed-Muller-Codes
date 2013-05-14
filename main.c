@@ -80,6 +80,13 @@ void loop(char *s,int r,int m) {
     print_vector(e);
     printf("decoded:\n");
     print_vector(d);
+	
+	if (compare_vectors(v,d) == 0) {
+		printf("SAME\n");
+	} else {
+		printf("DIFFERENT\n");
+	}
+	
     destroy_vector(e);
 	destroy_vector(v);
     destroy_vector(d);

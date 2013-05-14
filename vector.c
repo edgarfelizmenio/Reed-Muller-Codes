@@ -20,6 +20,8 @@ vector *scalar_add(vector *, int);
 vector *add(vector *,vector *);
 vector *complement_vector(vector *);
 vector *multiply(vector *, vector *);
+vector *subtract_vectors(vector *, vector *);
+int compare_vectors(vector *, vector *);
 int dot_product(vector *,vector *);
 void destroy_vector(vector *);
 void print_vector(vector*);
@@ -84,6 +86,16 @@ vector *add_vectors(vector *v1, vector *v2) {
 	}
 
 	return s;
+}
+
+int compare_vectors(vector *v1, vector *v2) {
+	int i;
+	for (i = 0 ; i < v1->length; i++) {
+		if (v1->values[i] != v2->values[i]) {
+			return v1->values[i] - v2->values[i];
+		}
+	}
+	return 0;
 }
 
 int dot_product(vector *v1, vector *v2) {
