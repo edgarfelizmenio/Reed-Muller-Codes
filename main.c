@@ -21,25 +21,12 @@ int main(void) {
     loop("00110010",3,3);
     loop("1111111111111111",2,5);
 	loop("0010011111111111",2,5);
-
-    v = to_int_vector("11111111111111111111111111111111",32);
-    e = encode(v,2,5);
-    printf("original:\n");
-    print_vector(v);
-    printf("encoded (2,5):\n");
-    print_vector(e);
-    destroy_vector(e);
-    e = encode(v,2,4);
-    printf("encoded (2,4):\n");
-    print_vector(e);
-    destroy_vector(e);
-    e = encode(v,3,3);
-    printf("encoded (3,3):\n");
-    print_vector(e);
-    destroy_vector(e);
-    destroy_vector(v);
-    printf("\n");
-    
+    loop("11111111111111111111111111111111", 2, 5);
+    loop("11111111111111111111111111111111", 2, 4);
+    loop("11111111111111111111111111111111", 3, 3);
+    loop("11111111111111111111111111111111", 0, 3);
+    loop("11111111111111111111111111111111", 1, 3);
+    loop("11111111111111111111111111111111", 2, 3);
     
     e = to_int_vector("1010111111111010",16);
     d = decode(e,2,4);

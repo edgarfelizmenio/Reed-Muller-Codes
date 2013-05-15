@@ -24,6 +24,7 @@ list *generate_reduced_monomials(int, int);
 matrix *create_generator_matrix(int, list *);
 vector **generate_characteristic_vectors(monomial *, int);
 int majority_logic(vector *, monomial *, int);
+int majority(vector *, vector **, int);
 
 vector *encode(vector*,int,int);
 vector *decode(vector*,int,int);
@@ -237,28 +238,14 @@ vector **generate_characteristic_vectors(monomial *mon, int m) {
     return characteristic_vector_array;
 }
 
-int majority_logic(vector *v, monomial * mon, int m) {
+int majority(vector *v, vector **characteristic_vectors, int num_vectors) {
     int i, count_1;
-    int num_vectors;
-    vector *characteristic_vector;
-    vector **characteristic_vectors = generate_characteristic_vectors(mon, m);
-    num_vectors = 1;
-    
-    for (i = 0; i < mon->degree; i++) {
-        if (mon->exponents[i] == 0) {
-            num_vectors <<= 1;
-        }
-    }
-    
     for (i = 0, count_1 = 0; i < num_vectors; i++) {
-        if (dot_product(v, characteristic_vectors[i]) == 1) {
+        if (dot_product(v,characteristic_vectors[i]) == 1) {
             count_1++;
         }
-        destroy_vector(characteristic_vectors[i]);
     }
-		
-    free(characteristic_vectors);
-    return count_1 * 2 >= num_vectors? 1:0;
+    return count_1 * 2 >= num_vectors? 1: 0;
 }
 
 vector *encode(vector* v,int r,int m) {	
@@ -295,57 +282,112 @@ vector *encode(vector* v,int r,int m) {
 	return result;
 }
 
-vector *decode(vector* v, int r, int m) {
-    int i,j,count_1, diff = 0;
-    list *reduced_monomials = generate_reduced_monomials(r,m);
-	vector *result = create_vector(reduced_monomials->length);
-	list *monomial_groups = group_reduced_monomials(reduced_monomials,r,m);
-	list *monomial_group;
-	vector *majority, *s, *u = create_vector(v->length), *temp_vector;
-	monomial *mon;
-	matrix *generator_matrix;
-	
-	temp_vector = u;
-	u = add_vectors(u,v);
-	destroy_vector(temp_vector);
-	
-	j = result->length - 1;
-	while (!is_empty_list(monomial_groups)) {
-		monomial_group = (list *)pop(monomial_groups);
-		
-		majority = create_vector(monomial_group->length);
-		generator_matrix = create_generator_matrix(m, monomial_group);
-		
-		i = 0;
-		while (!is_empty_list(monomial_group)) {
-			mon = (monomial *)remove_first(monomial_group);
-			majority->values[i] = majority_logic(u,mon,m);
-			i++;
-			destroy_monomial(mon);
-		}
-		
-		i = majority->length - 1;
-		while (i >= 0) {
-			result->values[j] = majority->values[i];
-			i--;
-			j--;
-		}
-		
-		s = lmultiply_vector(majority,generator_matrix);
+vector *decode(vector *v, int r, int m) {
+    int i, j, k;
+    int pos_e, pos_d;
+    int num_chunks, chunk_size, partial_size;
+    int characteristic_vector_count;
+    vector **u_chunks, **r_chunks, **m_chunks;
+    vector **characteristic_vectors;
+    vector *s, *temp_vector, *result;
+    list *reduced_monomials, *monomial_groups, *monomial_group;
+    monomial *mon;
+    matrix *generator_matrix;
+    
+    reduced_monomials = generate_reduced_monomials(r,m);
+    partial_size = reduced_monomials->length;
+    monomial_groups = group_reduced_monomials(reduced_monomials,r,m);
+    chunk_size = 1 << m;
+    num_chunks = (v->length / chunk_size) + (v->length % chunk_size > 0? 1: 0);
+    
+    /*initialize all chunks*/
+    u_chunks = (vector **)calloc(num_chunks, sizeof(vector *));
+    r_chunks = (vector **)calloc(num_chunks, sizeof(vector *));
+    m_chunks = (vector **)calloc(num_chunks, sizeof(vector *));
+    for (i = 0, pos_e = 0; i < num_chunks; i++) {
+        u_chunks[i] = create_vector(chunk_size);
+        r_chunks[i] = create_vector(partial_size);
 
-		temp_vector = u;
-		u = add_vectors(u,s);
+        for (j = 0; j < u_chunks[i]->length && pos_e < v->length; j++, pos_e++) {
+            u_chunks[i]->values[j] = v->values[pos_e];
+        }
+    }
+    
+    /*decode proper*/
+    i = partial_size - 1;
+    while (!is_empty_list(monomial_groups)) {
+        monomial_group = (list *)pop(monomial_groups);
+        
+        for (j = 0; j < num_chunks; j++) {
+            m_chunks[j] = (vector *)create_vector(monomial_group->length);
+        }
+        
+        generator_matrix = create_generator_matrix(m, monomial_group);
+        
+        j = 0;
+        while (!is_empty_list(monomial_group)) {
+            mon = (monomial *)remove_first(monomial_group);
+            characteristic_vector_count = 1;
+            
+            for (k = 0; k < mon->degree; k++) {
+                if (mon->exponents[k] == 0) {
+                    characteristic_vector_count <<= 1;
+                }
+            }
+            
+            characteristic_vectors = generate_characteristic_vectors(mon, m);
+            
+            for (k = 0; k < num_chunks; k++) {
+                m_chunks[k]->values[j] = majority(u_chunks[k], characteristic_vectors, characteristic_vector_count);
+            }
+            
+            j++;
+            
+            for (k = 0; k < characteristic_vector_count; k++) {
+                destroy_vector(characteristic_vectors[k]);
+            }
+            free(characteristic_vectors);
+            destroy_monomial(mon);
+        }
+        
+        j--;
+        while (j >= 0) {
+            for (k = 0; k < num_chunks; k++) {
+                r_chunks[k]->values[i] = m_chunks[k]->values[j];
+            }
+            i--;
+            j--;
+        }
+        
+        for (k = 0; k < num_chunks; k++) {
+            s = lmultiply_vector(m_chunks[k], generator_matrix);
+            temp_vector = u_chunks[k];
+            u_chunks[k] = add_vectors(u_chunks[k], s);
 
-		destroy_vector(s);
-		destroy_vector(temp_vector);
-		destroy_list(monomial_group);
-		destroy_vector(majority);
-		destroy_matrix(generator_matrix);
-	}
-	
-	destroy_vector(u);
-	destroy_list(reduced_monomials);
-	destroy_list(monomial_groups);
+            destroy_vector(s);
+            destroy_vector(temp_vector);
+            destroy_vector(m_chunks[k]);
+        }
+        
+        destroy_list(monomial_group);
+        destroy_matrix(generator_matrix);
+    }
+    
+    result = create_vector(num_chunks * partial_size);
+    for (i = 0, pos_d = 0; i < num_chunks; i++) {
+        for (j = 0; j < r_chunks[i]->length && pos_d < result->length; j++, pos_d++) {
+            result->values[pos_d] = r_chunks[i]->values[j];
+        }
+        destroy_vector(r_chunks[i]);
+        destroy_vector(u_chunks[i]);
+    }
+    
+    /*clean*/
+    free(r_chunks);
+    free(u_chunks);
+    free(m_chunks);
+    destroy_list(reduced_monomials);
+    destroy_list(monomial_groups);
     return result;
 }
 
