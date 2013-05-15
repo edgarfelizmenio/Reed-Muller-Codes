@@ -109,7 +109,7 @@ int dot_product(vector *v1, vector *v2) {
 
 void print_vector(vector *v) {
 	int i;
-    printf("length: %d\t",v->length);
+    /*printf("length: %d\t",v->length);*/
 	for (i = 0; i < v->length; i++) {
 		printf("%d",v->values[i] & 1);
 	}

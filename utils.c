@@ -12,8 +12,8 @@
 #include<stdlib.h>
 #include"vector.c"
 
-vector *to_int_vector(char *s, int length);
-vector *to_bin_vector(char *s, int length);
+vector *to_int_vector(char *, int);
+int is_bin_string(char *, int);
 
 vector *to_int_vector(char *s, int length) {
 	int i;
@@ -26,5 +26,14 @@ vector *to_int_vector(char *s, int length) {
 	return v;
 }
 
+int is_bin_string(char *s, int length) {
+    int i;
+    for (i = 0; i < length || s[i] != '\0'; i++) {
+        if (s[i] != '0' && s[i] != '1') {
+            return 0;
+        }
+    }
+    return 1;
+}
 
 #endif
