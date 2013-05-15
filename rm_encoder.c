@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
         printf("\nencoded message: ");
         print_vector(encoded);
     
-        printf("\nencoded message must not receive more than %d error(s).\n\n", 1 << (m - r - 1));
+        printf("\nencoded message must not receive more than %d error(s) per %d bits.\n\n", 1 << (m - r - 1), 1 << m);
     }
     return 0;
 }

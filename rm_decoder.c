@@ -6,7 +6,7 @@
 #include "utils.c"
 
 int main(int argc, char **argv) {
-    int i, r, m, length, err_flag;
+    int i, r, m, length, err_count;
     vector *original, *decoded, *encoded;
     
     if (argc != 4) {
@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
             exit(1);         
         }
 
-        printf("\na maximum of %d error(s) can be corrected.\n", 1 << (m - r - 1));        
+        printf("\na maximum of %d error(s) can be corrected per %d bits.\n", 1 << (m - r - 1), 1 << m);        
         
         original = to_int_vector(argv[3], length);
         decoded = decode(original,r,m);
@@ -52,16 +52,17 @@ int main(int argc, char **argv) {
         print_vector(original);
         
         printf("\nError indices:");
-        for (i = 0, err_flag = 0; i < original->length; i++) {
+        for (i = 0, err_count = 0; i < original->length; i++) {
             if (original->values[i] % 2 != encoded->values[i] % 2) {
-                err_flag = 1;
+                err_count++;
                 printf(" %d", i);
             }
         }
-        if (err_flag == 0) {
+        if (err_count == 0) {
             printf(" None\n\n");
         } else {
-            printf("\n\n");
+            printf("\nNumber of errors: %d\n\n", err_count);
+            
         }
         
         
