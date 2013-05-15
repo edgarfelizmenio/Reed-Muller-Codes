@@ -22,7 +22,7 @@ vector *psi_x(int,int);
 list *create_gmonomials(generating_monomial *, int, int);
 list *generate_reduced_monomials(int, int);
 matrix *create_generator_matrix(int, list *);
-list *generate_characteristic_vectors(monomial *, int);
+vector **generate_characteristic_vectors(monomial *, int);
 int majority_logic(vector *, monomial *, int);
 
 vector *encode(vector*,int,int);
@@ -191,24 +191,21 @@ matrix *create_generator_matrix(int m, list *monomials) {
 	return generator_matrix;
 }
 
-list *generate_characteristic_vectors(monomial *mon, int m) {
-    int i,j = 0;
+vector **generate_characteristic_vectors(monomial *mon, int m) {
+    int i;
     list *characteristic_vectors = create_list();
     list *characteristic_vectors_temp;
 	vector *characteristic_vector;
     
 	vector *psi;
     vector *psi_inv;
-	
-	while (j >= 0) {
-		characteristic_vector = create_vector(1<<m);
-		for (i = 0; i < characteristic_vector->length; i++) {
-			characteristic_vector->values[i] = 1;
-		}
-		append(characteristic_vectors,characteristic_vector);
-		characteristic_vector = NULL;
-		j--;
-	}
+	vector **characteristic_vector_array;
+    
+    characteristic_vector = create_vector(1<<m);
+    for (i = 0; i < characteristic_vector->length; i++) {
+        characteristic_vector->values[i] = 1;
+    }
+    append(characteristic_vectors,characteristic_vector);
 		   
     for (i = 0; i < mon->degree; i++) {
         if (mon->exponents[i] == 0) {
@@ -216,7 +213,6 @@ list *generate_characteristic_vectors(monomial *mon, int m) {
             psi_inv = complement_vector(psi);
             characteristic_vectors_temp = create_list();
 			
-
 			while (!is_empty_list(characteristic_vectors)) {
 				characteristic_vector = (vector*)remove_first(characteristic_vectors);
 				append(characteristic_vectors_temp, multiply_vectors(characteristic_vector,psi));
@@ -231,25 +227,37 @@ list *generate_characteristic_vectors(monomial *mon, int m) {
 			characteristic_vectors_temp = NULL;
         }
     }
-    return characteristic_vectors;
+
+    characteristic_vector_array = (vector **)calloc(characteristic_vectors->length, sizeof(vector *));
+    for (i = 0; !is_empty_list(characteristic_vectors); i++) {
+        characteristic_vector_array[i] = (vector *)remove_first(characteristic_vectors);
+    }
+    destroy_list(characteristic_vectors);
+    
+    return characteristic_vector_array;
 }
 
 int majority_logic(vector *v, monomial * mon, int m) {
-    int count_1 = 0;
+    int i, count_1;
     int num_vectors;
     vector *characteristic_vector;
-    list *characteristic_vectors = generate_characteristic_vectors(mon, m);
-    num_vectors = characteristic_vectors->length;
-	
-    while (!is_empty_list(characteristic_vectors)) {
-        characteristic_vector = remove_first(characteristic_vectors);
-        if (dot_product(v,characteristic_vector) == 1) {
-			count_1++;
-		}
-        destroy_vector(characteristic_vector);
+    vector **characteristic_vectors = generate_characteristic_vectors(mon, m);
+    num_vectors = 1;
+    
+    for (i = 0; i < mon->degree; i++) {
+        if (mon->exponents[i] == 0) {
+            num_vectors <<= 1;
+        }
     }
-	
-    destroy_list(characteristic_vectors);
+    
+    for (i = 0, count_1 = 0; i < num_vectors; i++) {
+        if (dot_product(v, characteristic_vectors[i]) == 1) {
+            count_1++;
+        }
+        destroy_vector(characteristic_vectors[i]);
+    }
+		
+    free(characteristic_vectors);
     return count_1 * 2 >= num_vectors? 1:0;
 }
 
