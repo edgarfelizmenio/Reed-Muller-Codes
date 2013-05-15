@@ -8,7 +8,7 @@ void loop(char *,int,int);
 
 int main(void) {
 
-    vector *e, *d;
+    vector *v, *e, *d;
     loop("0111010",2,3);
     loop("01101001010",2,4);
     loop("0110",1,3);
@@ -22,6 +22,24 @@ int main(void) {
     loop("1111111111111111",2,5);
 	loop("0010011111111111",2,5);
 
+    v = to_int_vector("11111111111111111111111111111111",32);
+    e = encode(v,2,5);
+    printf("original:\n");
+    print_vector(v);
+    printf("encoded (2,5):\n");
+    print_vector(e);
+    destroy_vector(e);
+    e = encode(v,2,4);
+    printf("encoded (2,4):\n");
+    print_vector(e);
+    destroy_vector(e);
+    e = encode(v,3,3);
+    printf("encoded (3,3):\n");
+    print_vector(e);
+    destroy_vector(e);
+    destroy_vector(v);
+    printf("\n");
+    
     
     e = to_int_vector("1010111111111010",16);
     d = decode(e,2,4);

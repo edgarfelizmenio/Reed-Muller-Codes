@@ -254,29 +254,27 @@ int majority_logic(vector *v, monomial * mon, int m) {
 }
 
 vector *encode(vector* v,int r,int m) {	
-	int i;
-	vector *result, *errors, *param;
+	int i, j, num_chunks, pos_v, pos_e;
+	vector *result, *chunk, *partial;
 	node *rmnode;
 	list *reduced_monomials = generate_reduced_monomials(r,m);
 	matrix *generator_matrix = create_generator_matrix(m,reduced_monomials);
     
-	if (generator_matrix->num_rows < v->length) {
-		printf("\nMATRIX TOO SMALL FOR MESSAGE\n");
-		exit(1);
-	}
-	
-	if (generator_matrix->num_rows > v->length) {
-		param = create_vector(generator_matrix->num_rows);
-		for (i = 0; i < v->length; i++) {
-			param->values[i] = v->values[i];
-		}
-		result = lmultiply_vector(param, generator_matrix);
-		destroy_vector(param);
-	} else {
-		result = lmultiply_vector(v, generator_matrix);	
-	}
-	
-	result = lmultiply_vector(v, generator_matrix);
+    num_chunks = (v->length / generator_matrix->num_rows) + (v->length % generator_matrix->num_rows > 0? 1:0);
+    result = create_vector(num_chunks * generator_matrix->num_columns);
+    
+    for (i = 0, pos_v = 0, pos_e = 0; i < num_chunks; i++) {
+        chunk = create_vector(generator_matrix->num_rows);
+        for (j = 0; j < chunk->length && pos_v < v->length; j++, pos_v++) {
+            chunk->values[j] = v->values[pos_v];
+        }
+        partial = lmultiply_vector(chunk, generator_matrix);
+        for (j = 0; j < partial->length && pos_e < result->length; j++, pos_e++) {
+            result->values[pos_e] = partial->values[j];
+        }
+        destroy_vector(partial);
+        destroy_vector(chunk);
+    }
 
 	rmnode = reduced_monomials->head;
 	while (rmnode != NULL) {
