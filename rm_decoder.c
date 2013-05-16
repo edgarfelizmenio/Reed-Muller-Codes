@@ -11,11 +11,11 @@ int main(int argc, char **argv) {
     
     if (argc != 4) {
         printf("Usage:\n\n");
-        printf("\t./rm_decoder <r> <m> <message>\n\n");
+        printf("\t%s <r> <m> <message>\n\n", argv[0]);
         printf("\tWhere\n\n");
-        printf("\t\tr - the degree of the code.\n\n");
-        printf("\t\tm - the length of the code.\n\n");
-        printf("\t\tmessage - the message to be decoded (in bits).\n\n");
+        printf("\t\t<r> - the degree of the code.\n\n");
+        printf("\t\t<m> - the length of the code.\n\n");
+        printf("\t\t<message> - the message to be decoded (in bits).\n\n");
     } else {
         
         r = atoi(argv[1]);
