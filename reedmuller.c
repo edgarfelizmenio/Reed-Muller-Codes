@@ -257,7 +257,7 @@ vector *encode(vector* v,int r,int m) {
     
     num_chunks = (v->length / generator_matrix->num_rows) + (v->length % generator_matrix->num_rows > 0? 1:0);
     result = create_vector(num_chunks * generator_matrix->num_columns);
-    
+	
     for (i = 0, pos_v = 0, pos_e = 0; i < num_chunks; i++) {
         chunk = create_vector(generator_matrix->num_rows);
         for (j = 0; j < chunk->length && pos_v < v->length; j++, pos_v++) {
@@ -299,7 +299,7 @@ vector *decode(vector *v, int r, int m) {
     monomial_groups = group_reduced_monomials(reduced_monomials,r,m);
     chunk_size = 1 << m;
     num_chunks = (v->length / chunk_size) + (v->length % chunk_size > 0? 1: 0);
-    
+	
     /*initialize all chunks*/
     u_chunks = (vector **)calloc(num_chunks, sizeof(vector *));
     r_chunks = (vector **)calloc(num_chunks, sizeof(vector *));

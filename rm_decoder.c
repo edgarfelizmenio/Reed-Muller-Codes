@@ -7,6 +7,7 @@
 
 int main(int argc, char **argv) {
     int i, r, m, length, err_count;
+	int n,k,d;
     vector *original, *decoded, *encoded;
     
     if (argc != 4) {
@@ -37,8 +38,16 @@ int main(int argc, char **argv) {
             printf("message must only contain 0s and 1s!\n\n");
             exit(1);         
         }
+		
+		n = 1 << m;
+		for (i = 0, k = 1; i <= r; i++) {
+			k = k * (m - i)/(i + 1);
+		}
+		d = n >> r;
+		
+		printf("\n[%d, %d, %d]-code\n", n, d, r);
 
-        printf("\na maximum of %d error(s) can be corrected per %d bits.\n", 1 << (m - r - 1), 1 << m);        
+        printf("\na maximum of %d error(s) can be corrected per %d bits.\n", d >> 1, n);        
         
         original = to_int_vector(argv[3], length);
         decoded = decode(original,r,m);
