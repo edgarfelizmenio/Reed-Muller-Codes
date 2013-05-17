@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
         printf("\nencoded message: ");
         print_vector(encoded);
     
-        printf("\nencoded message must not receive more than %d error(s) per %d bits.\n\n", k >> 1, n);
+        printf("\nencoded message must not receive more than %d error(s) per %d bits.\n\n", d >> 1, n);
     }
     return 0;
 }
