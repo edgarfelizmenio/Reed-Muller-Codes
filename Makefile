@@ -52,4 +52,5 @@ run:
 	./bin/rm_decoder
 
 clean:
+	@echo "cleaning..."
 	rm *.o
