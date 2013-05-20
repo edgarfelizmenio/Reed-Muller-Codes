@@ -1,33 +1,17 @@
 #ifndef REEDMULLER_C
 #define REEDMULLER_C
 
-#include "vector.c"
-#include "matrix.c"
-#include "monomial.c"
-#include "list.c"
+#include <stdlib.h>
 
-struct generating_monomial {
-	int last_position;
-	int num_bits;
-	monomial *mon;
-};
+#include "common.h"
 
-typedef struct generating_monomial generating_monomial;
+#include "vector.h"
+#include "matrix.h"
+#include "monomial.h"
+#include "list.h"
 
-/* ================================================================================
-	function prototypes for reed-muller functions
-================================================================================ */
-vector *psi_monomial(int, monomial *);
-vector *psi_x(int,int);
-list *create_gmonomials(generating_monomial *, int, int);
-list *generate_reduced_monomials(int, int);
-matrix *create_generator_matrix(int, list *);
-vector **generate_characteristic_vectors(monomial *, int);
-int majority_logic(vector *, monomial *, int);
-int majority(vector *, vector **, int);
+#include "reedmuller.h"
 
-vector *encode(vector*,int,int);
-vector *decode(vector*,int,int);
 /* ================================================================================
 	function definitions for reed-muller functions
 ================================================================================ */
@@ -59,7 +43,7 @@ vector *psi_monomial(int m, monomial *mn) {
 			if (mn->exponents[i] > 0) {
 				mul1 = v;
 				mul2 = psi_x(m,i);
-				v = multiply_vectors(mul1,mul2);
+				v = (vector *)multiply_vectors(mul1,mul2);
 				destroy_vector(mul1);
 				destroy_vector(mul2);
 			}

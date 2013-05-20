@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "vector.c"
-#include "reedmuller.c"
-#include "utils.c"
+#include "vector.h"
+#include "reedmuller.h"
+#include "utils.h"
 
 int main(int argc, char **argv) {
     int r, m, length;

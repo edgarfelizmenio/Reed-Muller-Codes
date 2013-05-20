@@ -1,26 +1,13 @@
 #ifndef MATRIX_C
 #define MATRIX_C
 
+#include <stdio.h>
 #include <stdlib.h>
-#include "vector.c"
-#include "common.c"
 
-struct matrix {
-	int num_rows;
-	int num_columns;
-	int **values;
-};
+#include "vector.h"
+#include "common.h"
 
-typedef struct matrix matrix;
-
-/* ================================================================================
-	function prototypes for matrices
-================================================================================ */
-matrix *create_matrix(int,int);
-void destroy_matrix(matrix *);
-void set_matrix_value(matrix *, int, int, int);
-vector *lmultiply_vector(vector *, matrix *);
-void print_matrix(matrix *);
+#include "matrix.h"
 
 /* ================================================================================
 	function definitions for matrices

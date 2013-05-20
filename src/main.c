@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <string.h>
-#include "reedmuller.c"
-#include "utils.c"
-#include "vector.c"
+#include "reedmuller.h"
+#include "utils.h"
+#include "vector.h"
 
 void loop(char *,int,int);
 

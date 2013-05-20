@@ -10,10 +10,10 @@
 #define UTILS_C
 
 #include <stdlib.h>
-#include "vector.c"
+#include "common.h"
+#include "vector.h"
 
-vector *to_int_vector(char *, int);
-int is_bin_string(char *, int);
+#include "utils.h"
 
 vector *to_int_vector(char *s, int length) {
 	int i;
