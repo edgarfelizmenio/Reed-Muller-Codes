@@ -1,5 +1,5 @@
-#ifndef CONSTANTS_C
-#define CONSTANTS_C
+#ifndef COMMON_C
+#define COMMON_C
 
 #define DEGREE 2
 

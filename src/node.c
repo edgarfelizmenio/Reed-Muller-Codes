@@ -1,8 +1,8 @@
 #ifndef NODE_C
 #define NODE_C
 
-#include<stdlib.h>
-#include<stdio.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 struct node {
 	void *value;

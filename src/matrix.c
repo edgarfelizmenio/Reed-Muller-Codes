@@ -1,9 +1,9 @@
 #ifndef MATRIX_C
 #define MATRIX_C
 
-#include<stdlib.h>
-#include"vector.c"
-#include"constants.c"
+#include <stdlib.h>
+#include "vector.c"
+#include "common.c"
 
 struct matrix {
 	int num_rows;

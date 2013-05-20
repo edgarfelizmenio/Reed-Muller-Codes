@@ -1,9 +1,9 @@
 #ifndef LIST_C
 #define LIST_C
 
-#include<stdlib.h>
-#include<stdio.h>
-#include"node.c"
+#include <stdlib.h>
+#include <stdio.h>
+#include "node.c"
 
 struct list {
 	node *head;

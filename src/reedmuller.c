@@ -1,10 +1,10 @@
 #ifndef REEDMULLER_C
 #define REEDMULLER_C
 
-#include"vector.c"
-#include"matrix.c"
-#include"monomial.c"
-#include"list.c"
+#include "vector.c"
+#include "matrix.c"
+#include "monomial.c"
+#include "list.c"
 
 struct generating_monomial {
 	int last_position;

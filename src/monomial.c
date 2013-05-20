@@ -1,7 +1,7 @@
 #ifndef MONOMIAL_C
 #define MONOMIAL_C
 
-#include<stdlib.h>
+#include <stdlib.h>
 
 struct monomial {
 	int degree;

@@ -9,8 +9,8 @@
 #ifndef UTILS_C
 #define UTILS_C
 
-#include<stdlib.h>
-#include"vector.c"
+#include <stdlib.h>
+#include "vector.c"
 
 vector *to_int_vector(char *, int);
 int is_bin_string(char *, int);

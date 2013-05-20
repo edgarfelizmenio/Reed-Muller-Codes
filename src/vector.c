@@ -1,9 +1,9 @@
 #ifndef VECTOR_C
 #define VECTOR_C
 
-#include<stdlib.h>
+#include <stdlib.h>
 
-#include"constants.c"
+#include "common.c"
 
 struct vector {
 	int *values;
