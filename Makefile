@@ -9,7 +9,7 @@ OBJECTS = \
 	utils.o\
 	vector.o
 
-all: init main binaries run
+all: init main binaries run clean
 
 init:
 	@mkdir -p bin
@@ -50,3 +50,6 @@ run:
 	./bin/main > ./bin/out.txt
 	./bin/rm_encoder
 	./bin/rm_decoder
+
+clean:
+	rm *.o
