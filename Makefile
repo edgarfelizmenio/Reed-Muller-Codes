@@ -14,6 +14,7 @@ all: init rmtest binaries run clean
 init:
 	@mkdir -p bin
 	@mkdir -p src
+	@mkdir -p test
 
 common.o: ./src/common.c ./src/common.h
 	$(CC) -o common.o -c ./src/common.c
