@@ -2,6 +2,7 @@
 #define REEDMULLER_C
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "common.h"
 
@@ -186,12 +187,12 @@ vector **generate_characteristic_vectors(monomial *mon, int m) {
     vector *psi_inv;
 	vector **characteristic_vector_array;
     
-    characteristic_vector = create_vector(1<<m);
-    for (i = 0; i < characteristic_vector->length; i++) {
-        characteristic_vector->values[i] = 1;
-    }
-    append(characteristic_vectors,characteristic_vector);
-		   
+	characteristic_vector = create_vector(1<<m);
+	for (i = 0; i < characteristic_vector->length; i++) {
+		characteristic_vector->values[i] = 1;
+	}
+	append(characteristic_vectors,characteristic_vector);
+		
     for (i = 0; i < mon->degree; i++) {
         if (mon->exponents[i] == 0) {
             psi = psi_x(m,i);
@@ -214,7 +215,7 @@ vector **generate_characteristic_vectors(monomial *mon, int m) {
     }
 
     characteristic_vector_array = (vector **)calloc(characteristic_vectors->length, sizeof(vector *));
-    for (i = 0; !is_empty_list(characteristic_vectors); i++) {
+	for (i = 0; !is_empty_list(characteristic_vectors); i++) {
         characteristic_vector_array[i] = (vector *)remove_first(characteristic_vectors);
     }
     destroy_list(characteristic_vectors);
@@ -229,6 +230,13 @@ int majority(vector *v, vector **characteristic_vectors, int num_vectors) {
             count_1++;
         }
     }
+
+	fprintf(stderr, "TIE - %d, count_1 - %d, num_vectors - %d\n", count_1 * 2 == num_vectors, count_1, num_vectors);
+	if (count_1 * 2 == num_vectors) {
+
+		return -1;
+	}
+
     return count_1 * 2 >= num_vectors? 1: 0;
 }
 
@@ -268,7 +276,7 @@ vector *encode(vector* v,int r,int m) {
 
 vector *decode(vector *v, int r, int m) {
     int i, j, k;
-    int pos_e, pos_d;
+    int pos_e, pos_d, tie_err = 0;
     int num_chunks, chunk_size, partial_size;
     int characteristic_vector_count;
     vector **u_chunks, **r_chunks, **m_chunks;
@@ -323,7 +331,8 @@ vector *decode(vector *v, int r, int m) {
             
             for (k = 0; k < num_chunks; k++) {
                 m_chunks[k]->values[j] = majority(u_chunks[k], characteristic_vectors, characteristic_vector_count);
-            }
+				tie_err = tie_err > m_chunks[k]->values[j]? -1: 0;
+			}
             
             j++;
             
@@ -372,7 +381,13 @@ vector *decode(vector *v, int r, int m) {
     free(m_chunks);
     destroy_list(reduced_monomials);
     destroy_list(monomial_groups);
-    return result;
+	
+	if (tie_err == -1) {
+		destroy_vector(result);
+		return NULL;
+	}
+	
+	return result;
 }
 
 #endif

@@ -9,7 +9,7 @@ OBJECTS = \
 	utils.o\
 	vector.o
 
-all: init main binaries run clean
+all: init rmtest binaries run clean
 
 init:
 	@mkdir -p bin
@@ -36,9 +36,11 @@ reedmuller.o: ./src/reedmuller.c ./src/reedmuller.h ./src/common.h ./src/list.h 
 utils.o: ./src/utils.c ./src/utils.h ./src/common.h ./src/vector.h
 	$(CC) -o utils.o -c ./src/utils.c
 
-main: ./src/main.c $(OBJECTS)
-	@echo "compiling..."
-	$(CC) -o ./bin/main ./src/main.c $(OBJECTS)
+rmtest: ./test/test1.c $(OBJECTS)
+	@echo "testing..."
+	$(CC) -o ./test/test1 ./test/test1.c $(OBJECTS)
+	./test/test1 > test1_out.txt
+	rm ./test/test1
 
 binaries: ./src/rm_encoder.c ./src/rm_decoder.c $(OBJECTS)
 	@echo "building binary files..."
@@ -47,7 +49,6 @@ binaries: ./src/rm_encoder.c ./src/rm_decoder.c $(OBJECTS)
 
 run:
 	@echo "running..."
-	./bin/main > ./bin/out.txt
 	./bin/rm_encoder
 	./bin/rm_decoder
 
