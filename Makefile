@@ -37,11 +37,13 @@ reedmuller.o: ./src/reedmuller.c ./src/reedmuller.h ./src/common.h ./src/list.h 
 utils.o: ./src/utils.c ./src/utils.h ./src/common.h ./src/vector.h
 	$(CC) -o utils.o -c ./src/utils.c
 
-rmtest: ./test/test1.c $(OBJECTS)
+rmtest: ./test/test1.c ./test/test2.c $(OBJECTS)
 	@echo "testing..."
 	$(CC) -o ./test/test1 ./test/test1.c $(OBJECTS)
-	./test/test1 > test1_out.txt
-	rm ./test/test1
+	$(CC) -o ./test/test2 ./test/test2.c $(OBJECTS)
+	./test/test1 > test1_out.txt 2> test1_errlog.txt
+	./test/test2 > test2_out.txt 2> test2_errlog.txt
+	rm ./test/test1 ./test/test2
 
 binaries: ./src/rm_encoder.c ./src/rm_decoder.c $(OBJECTS)
 	@echo "building binary files..."

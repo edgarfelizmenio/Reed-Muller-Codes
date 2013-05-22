@@ -87,17 +87,33 @@ int dot_product(vector *v1, vector *v2) {
     return sum % DEGREE;
 }
 
-void print_vector(vector *v) {
+void print_vector(vector *v, FILE *outputstream) {
 	int i;
     /*printf("length: %d\t",v->length);*/
 	for (i = 0; i < v->length; i++) {
 		if (v->values[i] == -1) {
-			printf("*");
+			fprintf(outputstream, "*");
 		} else {
-			printf("%d",v->values[i] & 1);
+			fprintf(outputstream, "%d",v->values[i] & 1);
 		}
 	}
-    printf("\n");
+    fprintf(outputstream, "\n");
+}
+
+int distance(vector *v1, vector *v2) {
+	int i,d;
+	if (v1->length != v2->length) {
+		printf("vector length mismatch!\n");
+		exit(1);
+	}
+	
+	for (i = 0, d = 0; i < v1->length; i++) {
+		if (v1->values[i] % DEGREE != v2->values[i] % DEGREE) {
+			d++;
+		}
+	}
+	
+	return d;
 }
 
 void destroy_vector(vector *v) {

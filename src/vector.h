@@ -1,6 +1,8 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include <stdio.h>
+
 struct vector {
 	int *values;
 	int length;
@@ -20,6 +22,7 @@ vector *subtract_vectors(vector *, vector *);
 int compare_vectors(vector *, vector *);
 int dot_product(vector *,vector *);
 void destroy_vector(vector *);
-void print_vector(vector*);
+void print_vector(vector* , FILE *);
+int distance(vector *, vector *);
 
 #endif

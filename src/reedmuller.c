@@ -331,7 +331,9 @@ vector *decode(vector *v, int r, int m) {
             
             for (k = 0; k < num_chunks; k++) {
                 m_chunks[k]->values[j] = majority(u_chunks[k], characteristic_vectors, characteristic_vector_count);
-				tie_err = tie_err > m_chunks[k]->values[j]? -1: 0;
+				if (m_chunks[k]->values[j] == -1) {
+					tie_err = -1;
+				}
 			}
             
             j++;

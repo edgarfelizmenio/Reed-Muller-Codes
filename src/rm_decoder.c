@@ -7,7 +7,7 @@
 
 int main(int argc, char **argv) {
     int i, r, m, length, err_count;
-	int n,k,d;
+	int n,k,d,s;
     vector *original, *decoded, *encoded;
     
     if (argc != 4) {
@@ -27,53 +27,56 @@ int main(int argc, char **argv) {
             exit(1);
         }
         
-        if (r >= m) {
-            printf("r must be less than m!\n\n");
+        if (r > m) {
+            printf("r must not exceed m!\n\n");
             exit(1); 
         }
         
         length = strlen(argv[3]);
         
         if (!is_bin_string(argv[3],length)) {
-            printf("message must only contain 0s and 1s!\n\n");
+            printf("Message must only contain 0s and 1s!\n\n");
             exit(1);         
         }
 		
 		n = 1 << m;
-		for (i = 0, k = 1; i <= r; i++) {
-			k = k * (m - i)/(i + 1);
+		for (i = 0, s = 1, k = 1; i < r; i++) {
+			s = s * (m - i)/(i + 1);
+			k += s;
 		}
 		d = n >> r;
 		
-		printf("\n[%d, %d, %d]-code\n", n, d, r);
+		printf("\n[%d, %d, %d]-code\n", n, k, d);
 
-        printf("\na maximum of %d error(s) can be corrected per %d bits.\n", d >> 1, n);        
+        printf("\nA maximum of %d error(s) can be corrected per %d bits.\n", (d >> 1) - 1, n);        
         
         original = to_int_vector(argv[3], length);
         decoded = decode(original,r,m);
-        encoded = encode(decoded,r,m);
+		if (decoded == NULL) {
+			printf("\nToo many errors. Indeterminate message.\n\n");
+		} else {
+			encoded = encode(decoded,r,m);
         
-        printf("\ndecoded message: ");
-        print_vector(decoded);
-        printf("\noriginal encoded message: ");
-        print_vector(encoded);
-        printf("\nreceived encoded message: ");
-        print_vector(original);
+			printf("\nDecoded message: ");
+			print_vector(decoded, stdout);
+			printf("\nOriginal encoded message: ");
+			print_vector(encoded, stdout);
+			printf("\nReceived encoded message: ");
+			print_vector(original, stdout);
         
-        printf("\nError indices:");
-        for (i = 0, err_count = 0; i < original->length; i++) {
-            if (original->values[i] % 2 != encoded->values[i] % 2) {
-                err_count++;
-                printf(" %d", i);
-            }
+			printf("\nError indices:");
+			for (i = 0, err_count = 0; i < original->length; i++) {
+				if (original->values[i] % 2 != encoded->values[i] % 2) {
+					err_count++;
+					printf(" %d", i);
+				}
+			}
+			if (err_count == 0) {
+				printf(" None\n\n");
+			} else {
+				printf("\nNumber of errors: %d\n\n", err_count);
+			}
         }
-        if (err_count == 0) {
-            printf(" None\n\n");
-        } else {
-            printf("\nNumber of errors: %d\n\n", err_count);
-            
-        }
-        
         
     }
 

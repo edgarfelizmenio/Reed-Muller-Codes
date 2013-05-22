@@ -42,14 +42,14 @@ void loop(char *s,int r,int m) {
 	vector *e = encode(v,r,m);
     vector *d = decode(e,r,m);
 	printf("original:\n");
-    print_vector(v);
+    print_vector(v, stdout);
     printf("encoded:\n");
-    print_vector(e);
+    print_vector(e, stdout);
     printf("decoded:\n");
 	if (d == NULL) {
 		printf("Error: 0s and 1s tied in majority logic.\n");
 	} else {
-		print_vector(d);
+		print_vector(d, stdout);
 		if (compare_vectors(v,d) == 0) {
 			printf("SAME\n");
 		} else {
@@ -68,12 +68,12 @@ void decode_vector(char *s, int length, int r, int m) {
 	e = to_int_vector(s, length);
     d = decode(e,r,m);
     printf("encoded:\n");
-    print_vector(e);
+    print_vector(e, stdout);
 	if (d == NULL) {
 		printf("Error: 0s and 1s tied in majority logic.\n");
 	} else {
 		printf("decoded:\n");
-		print_vector(d);	
+		print_vector(d, stdout);	
 	}
 	destroy_vector(e);
 	printf("\n\n");	
