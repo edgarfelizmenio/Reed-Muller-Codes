@@ -43,7 +43,8 @@ rmtest: ./test/test1.c ./test/test2.c $(OBJECTS)
 	$(CC) -o ./test/test2 ./test/test2.c $(OBJECTS)
 	./test/test1 > test1_out.txt 2> test1_errlog.txt
 	./test/test2 > test2_out.txt 2> test2_errlog.txt
-	rm ./test/test1 ./test/test2
+	rm -f ./test/test1 ./test/test2
+	rm -f ./test/test1.exe ./test/test2.exe
 
 binaries: ./src/rm_encoder.c ./src/rm_decoder.c $(OBJECTS)
 	@echo "building binary files..."
